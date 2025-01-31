@@ -11,7 +11,7 @@ dim2 = [868, 20, 95, 600]
 dim3 = [856, 20, 119, 600]
 
 # folder_name = "test"  # change here
-folder_name = "pore_diam_05um"  # change here
+folder_name = "pore_diam_3um"  # change here
 dimensions = dim05  # change here
 
 # folder_name = "pore_diam_05um"
