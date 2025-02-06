@@ -11,8 +11,8 @@ dim2 = [868, 20, 95, 775]
 dim3 = [856, 20, 119, 775]
 
 # folder_name = "test"  # change here
-folder_name = "pore_diam_05um"  # change here
-dimensions = dim05  # change here
+folder_name = "pore_diam_1um"  # change here
+dimensions = dim1  # change here
 
 # folder_name = "pore_diam_05um"
 # folder_name = "pore_diam_1um"
@@ -99,7 +99,7 @@ for filename in file_list:
             new_row = pd.DataFrame(
                 {"time [s]": [i * 1e-4], "background": [cumul_none], "cumul Krytox": [cumul_krytox],
                  "normalized cumul Krytox": [0],
-                 "pore Krytox": [pore_krytox], "pore Krytox per domain": [pore_krytox / cumul_krytox],
+                 "pore Krytox": [pore_krytox], "pore Krytox per domain": [0],
                  "top reservoir Krytox": [exit_res_krytox],
                  "top res Krytox per domain": [exit_res_krytox / cumul_krytox],
                  "bottom reservoir Krytox": [cumul_krytox - pore_krytox - exit_res_krytox],
