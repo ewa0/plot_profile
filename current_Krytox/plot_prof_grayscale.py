@@ -20,8 +20,7 @@ dimensions = dim05  # change here
 # folder_name = "pore_diam_3um"
 
 
-df_master = pd.DataFrame(columns=["time [s]", "krytox", "dodecane",
-                                  "cumul_none", "normalized_krytox"])
+df_master = pd.DataFrame(columns=["time [s]"])
 directory = "/home/ewa/Documents/plot_profile/current_Krytox/" + folder_name + "/"
 file_list = os.listdir(directory)
 file_list.sort()
@@ -33,6 +32,7 @@ for filename in file_list:
         img = Image.open(filepath)
         # img.show()
 
+        # ************************** entire domain **************************#
         # crop
         x = dimensions[0]
         y = dimensions[1]
@@ -51,6 +51,7 @@ for filename in file_list:
         cumul_none = len(list((filter(lambda none: 248 <= none, values))))  # white
         # print(filename)
 
+        # ************************** pore **************************#
         # cropping pore only
         cropped_pore = cropped_image.crop((0, 358, width, 358 + 238))
         # cropped_pore.show()
@@ -64,6 +65,7 @@ for filename in file_list:
         pore_krytox = len(list((filter(lambda kryt: 41 <= kryt <= 247, values_pore))))  # gray
         pore_none = len(list((filter(lambda none: 248 <= none, values_pore))))  # white
 
+        # ************************** top reservoir **************************#
         # cropping top reservoir
         cropped_exit_reservoir = cropped_image.crop((0, 0, width, 357))
         # cropped_exit_reservoir.show()
@@ -76,32 +78,42 @@ for filename in file_list:
         exit_res_dodecane = len(list((filter(lambda dod: dod <= 40, values_res))))  # black
         exit_res_krytox = len(list((filter(lambda kryt: 41 <= kryt <= 247, values_res))))  # gray
 
+        # ************************** dataframe and export **************************#
         # appending data to dataframe
         if not cumul_krytox == 0:
             new_row = pd.DataFrame(
-                {"time [s]": [i * 1e-4], "cumul Krytox": [cumul_krytox], "cumul dodecane": [cumul_dodecane],
-                 "cumul_none": [cumul_none], "normalized_krytox": [cumul_krytox / (cumul_krytox + cumul_dodecane)],
-                 "pore dodecane": [pore_dodecane], "pore Krytox": [pore_krytox],
-                 "exit reservoir Krytox": [exit_res_krytox], "exit reservoir dodecane": [exit_res_dodecane],
-                 "inlet reservoir Krytox": [cumul_krytox - pore_krytox - exit_res_krytox],
-                 "inlet reservoir dodecane": [cumul_dodecane - pore_dodecane - pore_krytox]},
-                index=[i])
+                {"time [s]": [i * 1e-4], "background": [cumul_none], "cumul Krytox": [cumul_krytox],
+                 "normalized cumul Krytox": [cumul_krytox / (cumul_krytox + cumul_dodecane)],
+                 "pore Krytox": [pore_krytox], "pore Krytox per domain": [pore_krytox / cumul_krytox],
+                 "top reservoir Krytox": [exit_res_krytox],
+                 "top res Krytox per domain": [exit_res_krytox / cumul_krytox],
+                 "bottom reservoir Krytox": [cumul_krytox - pore_krytox - exit_res_krytox],
+                 "bottom res Krytox per domain": [(cumul_krytox - pore_krytox - exit_res_krytox) / cumul_krytox],
+                 "cumul dodecane": [cumul_dodecane], "pore dodecane": [pore_dodecane],
+                 "top reservoir dodecane": [exit_res_dodecane],
+                 "bottom reservoir dodecane": [cumul_dodecane - pore_dodecane - exit_res_dodecane],
+                 "cumul_none": [cumul_none]}, index=[i])
             df_master = pd.concat([df_master, new_row])
 
         else:
             new_row = pd.DataFrame(
-                {"time [s]": [i * 1e-4], "cumul Krytox": [cumul_krytox], "cumul dodecane": [cumul_dodecane],
-                 "cumul_none": [cumul_none], "normalized_krytox": [0], "pore dodecane": [pore_dodecane],
-                 "pore Krytox": [pore_krytox], "exit reservoir Krytox": [exit_res_krytox],
-                 "exit reservoir dodecane": [exit_res_dodecane],
-                 "inlet reservoir Krytox": [cumul_krytox - pore_krytox - exit_res_krytox],
-                 "inlet reservoir dodecane": [cumul_dodecane - pore_dodecane - pore_krytox]}, index=[i])
+                {"time [s]": [i * 1e-4], "background": [cumul_none], "cumul Krytox": [cumul_krytox],
+                 "normalized cumul Krytox": [0],
+                 "pore Krytox": [pore_krytox], "pore Krytox per domain": [pore_krytox / cumul_krytox],
+                 "top reservoir Krytox": [exit_res_krytox],
+                 "top res Krytox per domain": [exit_res_krytox / cumul_krytox],
+                 "bottom reservoir Krytox": [cumul_krytox - pore_krytox - exit_res_krytox],
+                 "bottom res Krytox per domain": [(cumul_krytox - pore_krytox - exit_res_krytox) / cumul_krytox],
+                 "cumul dodecane": [cumul_dodecane], "pore dodecane": [pore_dodecane],
+                 "top reservoir dodecane": [exit_res_dodecane],
+                 "bottom reservoir dodecane": [cumul_dodecane - pore_dodecane - exit_res_dodecane],
+                 "cumul_none": [cumul_none]}, index=[i])
             df_master = pd.concat([df_master, new_row])
 
-        # plot this funky stuff
-        plt.plot(df_master["time [s]"], df_master["normalized_krytox"])
-        plt.xlabel("time [s]")
-        plt.ylabel("normalized_krytox [-]")
+# plot this funky stuff
+plt.plot(df_master["time [s]"], df_master["normalized cumul Krytox"])
+plt.xlabel("time [s]")
+plt.ylabel("normalized_krytox [-]")
 
 # save to a file
 dir_name = os.path.join(os.getcwd())
