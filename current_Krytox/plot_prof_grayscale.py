@@ -10,18 +10,22 @@ dim1 = [880, 20, 71, 775]
 dim2 = [868, 20, 95, 775]
 dim3 = [856, 20, 119, 775]
 
+# dimensions = dim3  # change here
 # folder_name = "test"  # change here
-folder_name = "pore_diam_1um"  # change here
-dimensions = dim1  # change here
+folder_name = "pore2um_fibers_4um"  # change here
 
-# folder_name = "pore_diam_05um"
-# folder_name = "pore_diam_1um"
-# folder_name = "pore_diam_2um"
-# folder_name = "pore_diam_3um"
+res2 = [844, 20, 143, 775]
+res3 = [820, 20, 191, 775]
+res4 = [797, 20, 237, 775]
+dimensions = res4
 
+# Krytox thickness as a function of pore size
+# directory = "/home/ewa/Documents/plot_profile/current_Krytox/" + folder_name + "/"
+
+# Krytox thickness as a function of reservoir (fibers) size
+directory = "/home/ewa/Documents/plot_profile/reservoir_size_study/" + folder_name + "/"
 
 df_master = pd.DataFrame(columns=["time [s]"])
-directory = "/home/ewa/Documents/plot_profile/current_Krytox/" + folder_name + "/"
 file_list = os.listdir(directory)
 file_list.sort()
 
@@ -49,11 +53,10 @@ for filename in file_list:
         cumul_dodecane = len(list((filter(lambda dod: dod <= 40, values))))  # black
         cumul_krytox = len(list((filter(lambda kryt: 41 <= kryt <= 247, values))))  # gray
         cumul_none = len(list((filter(lambda none: 248 <= none, values))))  # white
-        # print(filename)
 
         # ************************** pore **************************#
         # cropping pore only
-        cropped_pore = cropped_image.crop((0, 358, width, 358 + 238))
+        cropped_pore = cropped_image.crop((0, 358, width, 358 + 238))  # constants from images pixels
         # cropped_pore.show()
 
         # plot profile pore
@@ -67,7 +70,7 @@ for filename in file_list:
 
         # ************************** top reservoir **************************#
         # cropping top reservoir
-        cropped_exit_reservoir = cropped_image.crop((0, 0, width, 357))
+        cropped_exit_reservoir = cropped_image.crop((0, 0, width, 357))  # constants from images pixels
         # cropped_exit_reservoir.show()
 
         # plot profile exit reservoir
